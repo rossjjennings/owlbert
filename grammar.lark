@@ -1,0 +1,18 @@
+?start: expression
+expression: term (add_op term)*
+?term: factor (mul_op factor)*
+?factor: unary_op? exponential
+?exponential: value (exp_op factor)?
+?value: NUMBER | CNAME | "(" expression ")"
+unary_op: "+" -> plus
+        | "-" -> minus
+add_op: "+" -> plus
+      | "-" -> minus
+mul_op: "*" -> times
+      | "/" -> divided_by
+      | "%" -> modulo
+exp_op: ("^"|"**") -> to_the
+
+%import common.NUMBER
+%import common.CNAME
+%ignore " "
