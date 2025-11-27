@@ -1,4 +1,5 @@
-?start: expression (DOUBLESLASH postfix)*
+?start: relation (DOUBLESLASH postfix)*
+?relation: expression (rel_op expression)?
 expression: term (add_op term)*
 ?term: factor (mul_op factor)*
 ?factor: unary_op? exponential
@@ -8,6 +9,12 @@ expression: term (add_op term)*
 function: funcname "(" expression ")"
 ?postfix: CNAME
 ?funcname: CNAME
+rel_op: "=" -> equals
+      | "<" -> less_than
+      | ">" -> greater_than
+      | ("<=" | "≤") -> less_than_or_equal
+      | (">=" | "≥") -> greater_than_or_equal
+      | ("!=" | "≠") -> not_equal
 unary_op: "+" -> plus
         | "-" -> minus
 add_op: "+" -> plus

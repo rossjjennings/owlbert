@@ -62,4 +62,10 @@ character_codes = {
     "Psi": "Ψ",
     "Omega": "Ω",
     "inf": "∞",
+    "le": "≤",
+    "leq": "≤",
+    "ge": "≥",
+    "geq": "≥",
+    "ne": "≠",
+    "neq": "≠",
 }

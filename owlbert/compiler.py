@@ -1,6 +1,7 @@
 from lark import Tree, Token
 import sympy
 from sympy import Symbol, Integer, Float
+from mpmath import mp
 from operator import mul
 from functools import reduce
 
@@ -17,7 +18,7 @@ def compile_expression(tree):
             try:
                 return Integer(token.value)
             except ValueError:
-                return Float(token.value)
+                return Float(token.value, dps=mp.dps)
         else:
             raise ValueError(f"unrecognized token type '{token.type}'")
     elif isinstance(tree, Tree):
@@ -32,6 +33,24 @@ def compile_expression(tree):
                 else:
                     raise ValueError(f"Unrecognized postfix operator '{child.value}'")
             return value
+        elif tree.data == 'relation':
+            lhs = tree.children[0]
+            lhs_value = compile_expression(lhs)
+            rhs = tree.children[2] # should exist since otherwise the node is omitted
+            rhs_value = compile_expression(rhs)
+            match tree.children[1].data:
+                case 'equals':
+                    return sympy.Eq(lhs_value, rhs_value)
+                case 'less_than':
+                    return sympy.Lt(lhs_value, rhs_value)
+                case 'greater_than':
+                    return sympy.Gt(lhs_value, rhs_value)
+                case 'less_than_or_equal':
+                    return sympy.Le(lhs_value, rhs_value)
+                case 'greater_than_or_equal':
+                    return sympy.Ge(lhs_value, rhs_value)
+                case 'not_equal':
+                    return sympy.Ne(lhs_value, rhs_value)
         elif tree.data == 'expression':
             terms = []
             negate_child = False

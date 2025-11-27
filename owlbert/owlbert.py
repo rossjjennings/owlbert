@@ -59,10 +59,7 @@ def run_repl():
                 continue
 
             result_str = CustomPrinter().doprint(result)
-            if isinstance(result, sympy.Float):
-                if '.' in result_str:
-                    result_str = result_str.rstrip("0")
-            print_formatted(HTML(f"<ansibrightred>Out[<b>{i}</b>]:</ansibrightred> {result_str}\n"))
+            print_formatted(HTML("<ansibrightred>Out[<b>{}</b>]:</ansibrightred> {}\n").format(i, result_str))
             i += 1
 
 if __name__ == "__main__":

@@ -1,6 +1,14 @@
 from sympy.printing import StrPrinter
+from mpmath.libmp import to_str, prec_to_dps
 
 class CustomPrinter(StrPrinter):
+    def _print_Float(self, expr):
+        return to_str(expr._mpf_, prec_to_dps(expr._prec))
+
+    def _print_Relational(self, expr):
+        charmap = {"==": "=", ">": ">", "<": "<", ">=": "≥", "<=": "≤", "!=": "≠"}
+        return f"{self._print(expr.lhs)} {charmap[expr.rel_op]} {self._print(expr.rhs)}"
+
     def _print_Infinity(self, expr):
         return '∞'
 
