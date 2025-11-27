@@ -25,8 +25,12 @@ def compile_expression(tree):
             first_child = tree.children[0]
             value = compile_expression(first_child)
             for child in tree.children[1:]:
-                if child.value in postfix_operators:
+                if child.value == "//":
+                    pass
+                elif child.value in postfix_operators:
                     value = postfix_operators[child.value](value)
+                else:
+                    raise ValueError(f"Unrecognized postfix operator '{child.value}'")
             return value
         elif tree.data == 'expression':
             terms = []
@@ -77,9 +81,18 @@ def compile_expression(tree):
                 return base_value**exp_value
             else:
                 return base_value
+        elif tree.data == 'factorial':
+            value = compile_expression(tree.children[0])
+            if tree.children[1].data == 'factorial':
+                value = sympy.factorial(value)
+            elif tree.children[1].data == 'double_factorial':
+                value = sympy.factorial2(value)
+            return value
         elif tree.data == 'function':
             name = tree.children[0].value
             value = compile_expression(tree.children[1])
             if name in functions:
                 value = functions[name](value)
+            else:
+                raise ValueError(f"Unrecognized function '{name}'")
             return value

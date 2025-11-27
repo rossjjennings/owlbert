@@ -35,6 +35,18 @@ class CustomPrinter(StrPrinter):
         return 'e'
     def _print_Abs(self, expr):
         return f'abs({self._print(expr.args[0])})'
+    def _print_factorial(self, expr):
+        arg = expr.args[0]
+        if (arg.is_Integer and arg.is_nonnegative) or arg.is_Symbol:
+            return f'{self._print(arg)}!'
+        else:
+            return f'({self._print(arg)})!'
+    def _print_factorial2(self, expr):
+        arg = expr.args[0]
+        if (arg.is_Integer and arg.is_nonnegative) or arg.is_Symbol:
+            return f'{self._print(expr.args[0])}!!'
+        else:
+            return f'({self._print(arg)})!!'
 
 def run_repl():
     session = PromptSession()
@@ -64,7 +76,7 @@ def run_repl():
                 continue
             try:
                 result = compile_expression(tree)
-            except ValueError as err:
+            except Exception as err:
                 print_formatted(HTML(f"<ansibrightred>{'-'*75}</ansibrightred>"))
                 msg = "<b>ERROR</b>: Could not evaluate expression"
                 print_formatted(HTML(f"<ansibrightred>{msg}</ansibrightred>"))

@@ -2,7 +2,8 @@
 expression: term (add_op term)*
 ?term: factor (mul_op factor)*
 ?factor: unary_op? exponential
-?exponential: value (exp_op factor)?
+?exponential: factorial (exp_op factor)?
+?factorial: value fact_op?
 ?value: NUMBER | CNAME | "(" expression ")" | function
 function: funcname "(" expression ")"
 ?postfix: CNAME
@@ -14,6 +15,8 @@ add_op: "+" -> plus
 mul_op: "*" -> times
       | "/" -> divided_by
 exp_op: ("^"|"**") -> to_the
+fact_op: "!" -> factorial
+       | "!!" -> double_factorial
 
 DOUBLESLASH: "//"
 CNAME: ("_"|LETTER) ("_"|LETTER|DIGIT)*
