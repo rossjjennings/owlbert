@@ -24,9 +24,9 @@ def compile_expression(tree):
         if tree.data == 'start':
             first_child = tree.children[0]
             value = compile_expression(first_child)
-            last_child = tree.children[-1]
-            if last_child.value in postfix_operators:
-                value = postfix_operators[last_child.value](value)
+            for child in tree.children[1:]:
+                if child.value in postfix_operators:
+                    value = postfix_operators[child.value](value)
             return value
         elif tree.data == 'expression':
             terms = []

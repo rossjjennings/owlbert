@@ -1,11 +1,12 @@
-?start: expression (DOUBLESLASH postfix)?
+?start: expression (DOUBLESLASH postfix)*
 expression: term (add_op term)*
 ?term: factor (mul_op factor)*
 ?factor: unary_op? exponential
 ?exponential: value (exp_op factor)?
 ?value: NUMBER | CNAME | "(" expression ")" | function
-function: CNAME "(" expression ")"
+function: funcname "(" expression ")"
 ?postfix: CNAME
+?funcname: CNAME
 unary_op: "+" -> plus
         | "-" -> minus
 add_op: "+" -> plus
