@@ -4,9 +4,10 @@ from prompt_toolkit import print_formatted_text as print_formatted
 from lark import Lark, UnexpectedInput
 from pathlib import Path
 import sympy
-from sympy.printing import StrPrinter
 
 from .compiler import compile_expression
+from .completion import LatexCompleter
+from .printing import CustomPrinter
 
 kb = KeyBindings()
 with open(Path(__file__).parent / "grammar.lark") as f:
@@ -20,36 +21,8 @@ def add_line(event):
 def accept_input(event):
     event.current_buffer.validate_and_handle()
 
-class CustomPrinter(StrPrinter):
-    def _print_Infinity(self, expr):
-        return '∞'
-    def _print_NegativeInfinity(self, expr):
-        return '-∞'
-    def _print_ComplexInfinity(self, expr):
-        return 'z∞'
-    def _print_ImaginaryUnit(self, expr):
-        return 'i'
-    def _print_Pi(self, expr):
-        return 'π'
-    def _print_Exp1(self, expr):
-        return 'e'
-    def _print_Abs(self, expr):
-        return f'abs({self._print(expr.args[0])})'
-    def _print_factorial(self, expr):
-        arg = expr.args[0]
-        if (arg.is_Integer and arg.is_nonnegative) or arg.is_Symbol:
-            return f'{self._print(arg)}!'
-        else:
-            return f'({self._print(arg)})!'
-    def _print_factorial2(self, expr):
-        arg = expr.args[0]
-        if (arg.is_Integer and arg.is_nonnegative) or arg.is_Symbol:
-            return f'{self._print(expr.args[0])}!!'
-        else:
-            return f'({self._print(arg)})!!'
-
 def run_repl():
-    session = PromptSession()
+    session = PromptSession(completer=LatexCompleter())
     print()
 
     i = 1
