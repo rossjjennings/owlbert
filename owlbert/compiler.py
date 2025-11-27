@@ -1,4 +1,5 @@
 from lark import Tree, Token
+import sympy
 from sympy import Symbol, Integer, Float
 from operator import mul
 from functools import reduce
@@ -30,7 +31,25 @@ def compile_expression(tree):
         else:
             raise ValueError(f"unrecognized token type '{token.type}'")
     elif isinstance(tree, Tree):
-        if tree.data == 'expression':
+        if tree.data == 'start':
+            first_child = tree.children[0]
+            value = compile_expression(first_child)
+            last_child = tree.children[-1]
+            match last_child.value:
+                case "N" | "evalf":
+                    value = value.evalf()
+                case "simplify":
+                    value = sympy.simplify(value)
+                case "expand":
+                    value = sympy.expand(value)
+                case "factor":
+                    value = sympy.factor(value)
+                case "cancel":
+                    value = sympy.cancel(value)
+                case "apart":
+                    value = sympy.apart(value)
+            return value
+        elif tree.data == 'expression':
             terms = []
             negate_child = False
             for child in tree.children:

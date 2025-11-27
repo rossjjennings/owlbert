@@ -1,9 +1,10 @@
-?start: expression
+?start: expression (DOUBLESLASH postfix)?
 expression: term (add_op term)*
 ?term: factor (mul_op factor)*
 ?factor: unary_op? exponential
 ?exponential: value (exp_op factor)?
 ?value: NUMBER | CNAME | "(" expression ")"
+?postfix: CNAME
 unary_op: "+" -> plus
         | "-" -> minus
 add_op: "+" -> plus
@@ -11,6 +12,8 @@ add_op: "+" -> plus
 mul_op: "*" -> times
       | "/" -> divided_by
 exp_op: ("^"|"**") -> to_the
+
+DOUBLESLASH: "//"
 
 %import common.NUMBER
 %import common.CNAME

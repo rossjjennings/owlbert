@@ -46,7 +46,7 @@ def run_repl():
                 print(str(err))
                 continue
             else:
-                result = sympy.expand(compile_expression(tree))
+                result = compile_expression(tree)
 
             result_str = str(result)
             if isinstance(result, sympy.Float):
