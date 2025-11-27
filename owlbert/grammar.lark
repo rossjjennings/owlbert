@@ -3,7 +3,8 @@ expression: term (add_op term)*
 ?term: factor (mul_op factor)*
 ?factor: unary_op? exponential
 ?exponential: value (exp_op factor)?
-?value: NUMBER | CNAME | "(" expression ")"
+?value: NUMBER | CNAME | "(" expression ")" | function
+function: CNAME "(" expression ")"
 ?postfix: CNAME
 unary_op: "+" -> plus
         | "-" -> minus

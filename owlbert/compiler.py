@@ -22,7 +22,20 @@ def get_symbols(tree):
 def compile_expression(tree):
     if isinstance(token := tree, Token):
         if token.type == 'CNAME':
-            return Symbol(token.value)
+            if token.value in ['pi', 'π']:
+                return sympy.pi
+            elif token.value in ['e', 'E']:
+                return sympy.E
+            elif token.value in ['i', 'I']:
+                return sympy.I
+            elif token.value in ['inf', 'oo', '∞']:
+                return sympy.oo
+            elif token.value in ['zoo', 'z∞']:
+                return sympy.zoo
+            elif token.value == 'nan':
+                return sympy.nan
+            else:
+                return Symbol(token.value)
         elif token.type == 'NUMBER':
             try:
                 return Integer(token.value)
@@ -48,6 +61,26 @@ def compile_expression(tree):
                     value = sympy.cancel(value)
                 case "apart":
                     value = sympy.apart(value)
+                case "trigsimp":
+                    value = sympy.trigsimp(value)
+                case "expand_trig" | "trigexpand":
+                    value = sympy.expand_trig(value)
+                case "powsimp":
+                    value = sympy.powsimp(value)
+                case "expand_power_exp" | "expexpand":
+                    value = sympy.expand_power_exp(value)
+                case "expand_power_base" | "baseexpand":
+                    value = sympy.expand_power_base(value)
+                case "powdenest":
+                    value = sympy.powdenest(value)
+                case "expand_log" | "logexpand":
+                    value = sympy.expand_log(value)
+                case "logcombine":
+                    value = sympy.logcombine(value)
+                case "expand_func" | "funcexpand":
+                    value = sympy.expand_func(value)
+                case "gammasimp":
+                    value = sympy.gammasimp(value)
             return value
         elif tree.data == 'expression':
             terms = []
@@ -98,3 +131,84 @@ def compile_expression(tree):
                 return base_value**exp_value
             else:
                 return base_value
+        elif tree.data == 'function':
+            name = tree.children[0].value
+            value = compile_expression(tree.children[1])
+            match name:
+                case "exp":
+                    value = sympy.exp(value)
+                case "log":
+                    value = sympy.log(value)
+                case "sqrt":
+                    value = sympy.sqrt(value)
+                case "cbrt":
+                    value = sympy.cbrt(value)
+                case "sin":
+                    value = sympy.sin(value)
+                case "cos":
+                    value = sympy.cos(value)
+                case "tan":
+                    value = sympy.tan(value)
+                case "cot":
+                    value = sympy.cot(value)
+                case "sec":
+                    value = sympy.sec(value)
+                case "csc":
+                    value = sympy.csc(value)
+                case "sinc":
+                    value = sympy.sinc(value)
+                case "asin" | "arcsin":
+                    value = sympy.asin(value)
+                case "acos" | "arccos":
+                    value = sympy.acos(value)
+                case "atan" | "arctan":
+                    value = sympy.atan(value)
+                case "acot" | "arccot":
+                    value = sympy.acot(value)
+                case "asec" | "arcsec":
+                    value = sympy.asec(value)
+                case "acsc" | "arccsc":
+                    value = sympy.acsc(value)
+                case "sinh":
+                    value = sympy.sinh(value)
+                case "cosh":
+                    value = sympy.cosh(value)
+                case "tanh":
+                    value = sympy.tanh(value)
+                case "coth":
+                    value = sympy.coth(value)
+                case "sech":
+                    value = sympy.sech(value)
+                case "csch":
+                    value = sympy.csch(value)
+                case "asinh" | "arsinh":
+                    value = sympy.asinh(value)
+                case "acosh" | "arcosh":
+                    value = sympy.acosh(value)
+                case "atanh" | "artanh":
+                    value = sympy.atanh(value)
+                case "acoth" | "arcoth":
+                    value = sympy.acoth(value)
+                case "asech" | "arsech":
+                    value = sympy.asech(value)
+                case "acsch" | "arcsch":
+                    value = sympy.acsch(value)
+                case "W" | "LambertW":
+                    value = sympy.LambertW(value)
+                case "gamma":
+                    value = sympy.gamma(value)
+                case "digamma":
+                    value = sympy.digamma(value)
+                case "trigamma":
+                    value = sympy.trigamma(value)
+                case "erf":
+                    value = sympy.erf(value)
+                case "erfc":
+                    value = sympy.erfc(value)
+                case "erfinv":
+                    value = sympy.erfinv(value)
+                case "erfcinv":
+                    value = sympy.erfcinv(value)
+                case "zeta":
+                    value = sympy.zeta(value)
+            return value
