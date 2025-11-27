@@ -15,7 +15,14 @@ mul_op: "*" -> times
 exp_op: ("^"|"**") -> to_the
 
 DOUBLESLASH: "//"
+CNAME: ("_"|LETTER) ("_"|LETTER|DIGIT)*
+LETTER: LATIN_LETTER | GREEK_LETTER | INFINITY
+GREEK_LETTER: GREEK_LCASE_LETTER | GREEK_UCASE_LETTER
+GREEK_LCASE_LETTER: "α".."ω"
+GREEK_UCASE_LETTER: "A".."Ω"
+INFINITY: "∞"
 
 %import common.NUMBER
-%import common.CNAME
+%import common.LETTER -> LATIN_LETTER
+%import common.DIGIT
 %ignore " "

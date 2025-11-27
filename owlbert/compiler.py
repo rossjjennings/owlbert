@@ -30,7 +30,7 @@ def compile_expression(tree):
                 return sympy.I
             elif token.value in ['inf', 'oo', '∞']:
                 return sympy.oo
-            elif token.value in ['zoo', 'z∞']:
+            elif token.value in ['zinf', 'zoo', 'z∞']:
                 return sympy.zoo
             elif token.value == 'nan':
                 return sympy.nan
@@ -81,6 +81,8 @@ def compile_expression(tree):
                     value = sympy.expand_func(value)
                 case "gammasimp":
                     value = sympy.gammasimp(value)
+                case "complexexpand":
+                    value = value.expand(complex=True)
             return value
         elif tree.data == 'expression':
             terms = []
@@ -143,6 +145,16 @@ def compile_expression(tree):
                     value = sympy.sqrt(value)
                 case "cbrt":
                     value = sympy.cbrt(value)
+                case "re":
+                    value = sympy.re(value)
+                case "im":
+                    value = sympy.im(value)
+                case "abs":
+                    value = sympy.Abs(value)
+                case "arg":
+                    value = sympy.arg(value)
+                case "conj" | "conjugate":
+                    value = sympy.conjugate(value)
                 case "sin":
                     value = sympy.sin(value)
                 case "cos":

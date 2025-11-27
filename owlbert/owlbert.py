@@ -4,6 +4,7 @@ from prompt_toolkit import print_formatted_text as print_formatted
 from lark import Lark, UnexpectedInput
 from pathlib import Path
 import sympy
+from sympy.printing import StrPrinter
 
 from .compiler import compile_expression
 
@@ -18,6 +19,20 @@ def add_line(event):
 @kb.add('c-m')
 def accept_input(event):
     event.current_buffer.validate_and_handle()
+
+class CustomPrinter(StrPrinter):
+    def _print_Infinity(self, expr):
+        return '∞'
+    def _print_NegativeInfinity(self, expr):
+        return '-∞'
+    def _print_ComplexInfinity(self, expr):
+        return 'z∞'
+    def _print_ImaginaryUnit(self, expr):
+        return 'i'
+    def _print_Pi(self, expr):
+        return 'π'
+    def _print_Exp1(self, expr):
+        return 'e'
 
 def run_repl():
     session = PromptSession()
@@ -45,10 +60,18 @@ def run_repl():
                 print_formatted(HTML(f"<ansibrightred>{'-'*75}</ansibrightred>"))
                 print(str(err))
                 continue
-            else:
+            try:
                 result = compile_expression(tree)
+            except ValueError as err:
+                print_formatted(HTML(f"<ansibrightred>{'-'*75}</ansibrightred>"))
+                msg = "<b>ERROR</b>: Could not evaluate expression"
+                print_formatted(HTML(f"<ansibrightred>{msg}</ansibrightred>"))
+                print_formatted(HTML(f"<ansibrightred>{'-'*75}</ansibrightred>"))
+                print(str(err))
+                print()
+                continue
 
-            result_str = str(result)
+            result_str = CustomPrinter().doprint(result)
             if isinstance(result, sympy.Float):
                 if '.' in result_str:
                     result_str = result_str.rstrip("0")
