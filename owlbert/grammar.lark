@@ -10,7 +10,6 @@ add_op: "+" -> plus
       | "-" -> minus
 mul_op: "*" -> times
       | "/" -> divided_by
-      | "%" -> modulo
 exp_op: ("^"|"**") -> to_the
 
 %import common.NUMBER
