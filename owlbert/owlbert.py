@@ -39,7 +39,12 @@ def run_repl():
             try:
                 tree = grammar.parse(input_text)
             except UnexpectedInput as err:
-                result = f"Got unexpected input while parsing:\n{err}"
+                print_formatted(HTML(f"<ansibrightred>{'-'*75}</ansibrightred>"))
+                msg = "<b>ERROR</b>: Got unexpected input while parsing"
+                print_formatted(HTML(f"<ansibrightred>{msg}</ansibrightred>"))
+                print_formatted(HTML(f"<ansibrightred>{'-'*75}</ansibrightred>"))
+                print(str(err))
+                continue
             else:
                 result = sympy.expand(compile_expression(tree))
 
@@ -47,7 +52,7 @@ def run_repl():
             if isinstance(result, sympy.Float):
                 if '.' in result_str:
                     result_str = result_str.rstrip("0")
-            print(result_str + '\n')
+            print_formatted(HTML(f"<ansibrightred>Out[<b>{i}</b>]:</ansibrightred> {result_str}\n"))
             i += 1
 
 if __name__ == "__main__":
