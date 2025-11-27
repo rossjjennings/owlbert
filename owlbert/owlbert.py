@@ -33,6 +33,8 @@ class CustomPrinter(StrPrinter):
         return 'π'
     def _print_Exp1(self, expr):
         return 'e'
+    def _print_Abs(self, expr):
+        return f'abs({self._print(expr.args[0])})'
 
 def run_repl():
     session = PromptSession()
