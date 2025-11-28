@@ -170,7 +170,7 @@ functions = {
     "legendre_symbol": sympy.legendre_symbol,
     "jacobi_symbol": sympy.jacobi_symbol,
     "kronecker_symbol": sympy.kronecker_symbol,
-    "mobuis": sympy.mobius,
+    "mobius": sympy.mobius,
     "primenu": sympy.primenu,
     "primeomega": sympy.primeomega,
     "totient": sympy.totient,
