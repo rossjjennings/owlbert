@@ -1,4 +1,5 @@
 import sympy
+from mpmath import mp
 
 special_values = {
     'pi': sympy.pi,
@@ -16,8 +17,8 @@ special_values = {
 }
 
 postfix_operators = {
-    "N": lambda value: value.evalf(),
-    "evalf": lambda value: value.evalf(),
+    "N": lambda value: value.evalf(n=mp.dps),
+    "evalf": lambda value: value.evalf(n=mp.dps),
     "simplify": sympy.simplify,
     "expand": sympy.expand,
     "factor": sympy.factor,

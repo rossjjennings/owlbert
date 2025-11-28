@@ -1,5 +1,7 @@
-?start: relation (DOUBLESLASH postfix)*
+?start: command | assignment
+?command: relation (DOUBLESLASH postfix)*
 ?relation: expression (rel_op expression)?
+assignment: CNAME ":=" expression
 expression: term (add_op term)*
 ?term: factor (mul_op factor)*
 ?factor: unary_op? exponential

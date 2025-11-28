@@ -4,6 +4,7 @@ from prompt_toolkit import print_formatted_text as print_formatted
 from lark import Lark, UnexpectedInput
 from pathlib import Path
 import sympy
+from mpmath import mp
 
 from .compiler import compile_expression
 from .completion import LatexCompleter
@@ -26,7 +27,10 @@ def run_repl():
     print()
 
     i = 1
+    local_vars = {}
     while True:
+        local_vars['dps'] = sympy.Integer(mp.dps)
+        local_vars['prec'] = sympy.Integer(mp.prec)
         try:
             input_text = session.prompt(
                 HTML(f"<ansibrightgreen>In [<b>{i}</b>]:</ansibrightgreen> "),
@@ -48,7 +52,7 @@ def run_repl():
                 print(str(err))
                 continue
             try:
-                result = compile_expression(tree)
+                result = compile_expression(tree, local_vars)
             except Exception as err:
                 print_formatted(HTML(f"<ansibrightred>{'-'*75}</ansibrightred>"))
                 msg = "<b>ERROR</b>: Could not evaluate expression"
@@ -58,6 +62,7 @@ def run_repl():
                 print()
                 continue
 
+            local_vars['_'] = result
             result_str = CustomPrinter().doprint(result)
             print_formatted(HTML("<ansibrightred>Out[<b>{}</b>]:</ansibrightred> {}\n").format(i, result_str))
             i += 1
