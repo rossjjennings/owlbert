@@ -6,7 +6,7 @@ expression: term (add_op term)*
 ?exponential: factorial (exp_op factor)?
 ?factorial: value fact_op?
 ?value: NUMBER | CNAME | "(" expression ")" | function
-function: funcname "(" expression ")"
+function: funcname "(" expression ("," expression)* ")"
 ?postfix: CNAME
 ?funcname: CNAME
 rel_op: "=" -> equals

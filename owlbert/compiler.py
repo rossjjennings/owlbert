@@ -109,9 +109,9 @@ def compile_expression(tree):
             return value
         elif tree.data == 'function':
             name = tree.children[0].value
-            value = compile_expression(tree.children[1])
+            args = [compile_expression(child) for child in tree.children[1:]]
             if name in functions:
-                value = functions[name](value)
+                value = functions[name](*args)
             else:
                 raise ValueError(f"Unrecognized function '{name}'")
             return value

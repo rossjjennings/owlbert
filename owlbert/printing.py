@@ -33,14 +33,23 @@ class CustomPrinter(StrPrinter):
     def _print_Abs(self, expr):
         return f'abs({self._print(expr.args[0])})'
 
+    def _print_LambertW(self, expr):
+        return f'W({", ".join([self._print(arg) for arg in expr.args])})'
+
     def _print_gamma(self, expr):
         return f'Γ({self._print(expr.args[0])})'
+
+    def _print_beta(self, expr):
+        return f'Β({", ".join([self._print(arg) for arg in expr.args])})'
 
     def _print_digamma(self, expr):
         return f'ψ({self._print(expr.args[0])})'
 
     def _print_zeta(self, expr):
         return f'ζ({self._print(expr.args[0])})'
+
+    def _print_dirichlet_eta(self, expr):
+        return f'η({self._print(expr.args[0])})'
 
     def _print_factorial(self, expr):
         arg = expr.args[0]
