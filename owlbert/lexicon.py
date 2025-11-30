@@ -48,6 +48,7 @@ postfix_operators = {
     "series": sympy.series,
     "integrate": integrate_wrapper,
     "derivative": lambda *args: sympy.Derivative(*args, evaluate=True),
+    "subs": lambda expr, *args: expr.subs(*args),
 }
 
 functions = {
