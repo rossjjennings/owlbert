@@ -16,9 +16,18 @@ special_values = {
     'nan': sympy.nan,
 }
 
+def integrate_wrapper(expr, var=None, a=None, b=None):
+    if a is None and b is None:
+        if var is None:
+            return sympy.integrate(expr)
+        else:
+            return sympy.integrate(expr, var)
+    else:
+        return sympy.integrate(expr, (var, a, b))
+
 postfix_operators = {
     "N": lambda value: value.evalf(n=mp.dps),
-    "evalf": lambda value: value.evalf(n=mp.dps),
+    "evalf": lambda *args: value.evalf(*args),
     "simplify": sympy.simplify,
     "expand": sympy.expand,
     "factor": sympy.factor,
@@ -35,6 +44,10 @@ postfix_operators = {
     "funcexpand": sympy.expand_func,
     "gammasimp": sympy.gammasimp,
     "complexexpand": lambda value: value.expand(complex=True),
+    "limit": sympy.limit,
+    "series": sympy.series,
+    "integrate": integrate_wrapper,
+    "derivative": lambda *args: sympy.Derivative(*args, evaluate=True),
 }
 
 functions = {

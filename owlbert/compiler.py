@@ -28,12 +28,24 @@ def compile_expression(tree, local_vars):
             first_child = tree.children[0]
             value = compile_expression(first_child, local_vars)
             for child in tree.children[1:]:
-                if child.value == "//":
+                if hasattr(child, 'value') and child.value == "//":
                     pass
-                elif child.value in postfix_operators:
-                    value = postfix_operators[child.value](value)
-                else:
-                    raise ValueError(f"Unrecognized postfix operator '{child.value}'")
+                elif hasattr(child, 'data') and child.data == 'function':
+                    name = child.children[0].value
+                    args = [value] + [
+                        compile_expression(grandchild, local_vars)
+                        for grandchild in child.children[1:]
+                    ]
+                    if name in postfix_operators:
+                        value = postfix_operators[name](*args)
+                    else:
+                        raise ValueError(f"Unrecognized postfix operator '{name}'")
+                elif hasattr(child, 'value'):
+                    name = child.value
+                    if child.value in postfix_operators:
+                        value = postfix_operators[child.value](value)
+                    else:
+                        raise ValueError(f"Unrecognized postfix operator '{name}'")
             return value
         elif tree.data == 'relation':
             lhs = tree.children[0]

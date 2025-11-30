@@ -9,7 +9,7 @@ expression: term (add_op term)*
 ?factorial: value fact_op?
 ?value: NUMBER | CNAME | "(" expression ")" | function
 function: funcname "(" expression ("," expression)* ")"
-?postfix: CNAME
+?postfix: CNAME | function
 ?funcname: CNAME
 rel_op: "=" -> equals
       | "<" -> less_than
