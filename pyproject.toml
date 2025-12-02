@@ -17,3 +17,6 @@ dependencies = [
 
 [project.scripts]
 owlbert = "owlbert.owlbert:run_repl"
+
+[tool.setuptools.package-data]
+owlbert = ["grammar.lark"]
