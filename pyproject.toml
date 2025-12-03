@@ -18,5 +18,18 @@ dependencies = [
 [project.scripts]
 jabr = "jabr.jabr:run_repl"
 
+[dependency-groups]
+pixi-extra = [
+    "ipython",
+    "pip",
+]
+
 [tool.setuptools.package-data]
 jabr = ["grammar.lark"]
+
+[tool.pixi.workspace]
+channels = ["conda-forge"]
+platforms = ["linux-64"]
+
+[tool.pixi.environments]
+default = {features = ["pixi-extra"]}
