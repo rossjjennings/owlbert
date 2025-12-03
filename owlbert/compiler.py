@@ -136,6 +136,8 @@ def compile_expression(tree, local_vars):
             args = [compile_expression(child, local_vars) for child in tree.children[1:]]
             if name in functions:
                 value = functions[name](*args)
+            elif name in postfix_operators:
+                value = postfix_operators[name](*args)
             else:
                 raise ValueError(f"Unrecognized function '{name}'")
             return value
