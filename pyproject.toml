@@ -16,7 +16,7 @@ dependencies = [
 ]
 
 [project.scripts]
-jabr = "jabr.jabr:run_repl"
+jabr = "jabr.repl:run"
 
 [dependency-groups]
 pixi-extra = [

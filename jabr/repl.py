@@ -22,7 +22,7 @@ def add_line(event):
 def accept_input(event):
     event.current_buffer.validate_and_handle()
 
-def run_repl():
+def run():
     session = PromptSession(completer=LatexCompleter())
     print()
 
@@ -68,4 +68,4 @@ def run_repl():
             i += 1
 
 if __name__ == "__main__":
-    run_repl()
+    run()
