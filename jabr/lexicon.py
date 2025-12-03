@@ -16,7 +16,7 @@ special_values = {
     'nan': sympy.nan,
 }
 
-def integrate_wrapper(expr, var=None, a=None, b=None):
+def _integrate(expr, var=None, a=None, b=None):
     if a is None and b is None:
         if var is None:
             return sympy.integrate(expr)
@@ -25,15 +25,29 @@ def integrate_wrapper(expr, var=None, a=None, b=None):
     else:
         return sympy.integrate(expr, (var, a, b))
 
-def sum_wrapper(expr, var, a, b):
+def _sum(expr, var, a, b):
     return sympy.Sum(expr, (var, a, b)).doit()
 
+def _factor(expr, *args):
+    if isinstance(expr, sympy.Integer):
+        return _factorint(expr)
+    else:
+        return sympy.factor(expr, *args)
+
+def _factorint(expr):
+    factors_dict = sympy.factorint(expr)
+    ppow_factors = [
+        sympy.Pow(key, val, evaluate=(val==1))
+        for key, val in factors_dict.items()
+    ]
+    return sympy.Mul(*ppow_factors, evaluate=False)
+
 postfix_operators = {
-    "N": lambda value: value.evalf(n=mp.dps),
-    "evalf": lambda *args: value.evalf(*args),
+    "N": lambda expr: expr.evalf(n=mp.dps),
+    "evalf": lambda expr, *args: expr.evalf(*args),
     "simplify": sympy.simplify,
     "expand": sympy.expand,
-    "factor": sympy.factor,
+    "factor": _factor,
     "cancel": sympy.cancel,
     "apart": sympy.apart,
     "trigsimp": sympy.trigsimp,
@@ -46,13 +60,15 @@ postfix_operators = {
     "logcombine": sympy.logcombine,
     "funcexpand": sympy.expand_func,
     "gammasimp": sympy.gammasimp,
-    "complexexpand": lambda value: value.expand(complex=True),
+    "complexexpand": lambda expr: expr.expand(complex=True),
     "limit": sympy.limit,
     "series": sympy.series,
-    "integrate": integrate_wrapper,
+    "integrate": _integrate,
     "derivative": lambda *args: sympy.Derivative(*args, evaluate=True),
     "subs": lambda expr, *args: expr.subs(*args),
-    "sum": sum_wrapper,
+    "sum": _sum,
+    "doit": lambda expr, *args: expr.doit(*args),
+    "factorint": _factorint,
 }
 
 functions = {
