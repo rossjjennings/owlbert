@@ -25,6 +25,9 @@ def integrate_wrapper(expr, var=None, a=None, b=None):
     else:
         return sympy.integrate(expr, (var, a, b))
 
+def sum_wrapper(expr, var, a, b):
+    return sympy.Sum(expr, (var, a, b)).doit()
+
 postfix_operators = {
     "N": lambda value: value.evalf(n=mp.dps),
     "evalf": lambda *args: value.evalf(*args),
@@ -49,6 +52,7 @@ postfix_operators = {
     "integrate": integrate_wrapper,
     "derivative": lambda *args: sympy.Derivative(*args, evaluate=True),
     "subs": lambda expr, *args: expr.subs(*args),
+    "sum": sum_wrapper,
 }
 
 functions = {
