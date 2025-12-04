@@ -4,36 +4,41 @@ from mpmath import mp
 
 from .lexicon import special_values, postfix_operators, functions
 
-rel_ops = {
-    'equals': sympy.Eq,
-    'less_than': sympy.Lt,
-    'greater_than': sympy.Gt,
-    'less_than_or_equal': sympy.Le,
-    'greater_than_or_equal': sympy.Ge,
-    'not_equal': sympy.Ne,
-}
-
 class SympyTransformer(Transformer):
     """
     Convert a tree into a sympy expression.
     """
-    def __init__(self):
+    def __init__(self, evaluate=True):
+        self.evaluate = evaluate
         self.local_vars = {}
 
     def command(self, children):
         expr, *postfixes = children
-        for name in postfixes:
-            if name in postfix_operators:
-                expr = postfix_operators[name](expr)
+        for function in postfixes:
+            expr = function(expr)
         return expr
 
     def relation(self, children):
         rhs, op, lhs = children
-        return op(rhs, lhs)
+        return op(rhs, lhs, evaluate=self.evaluate)
 
-    def rel_op(self, children):
-        data, = children
-        return rel_ops[data]
+    def equals(self, children):
+        return sympy.Eq
+
+    def less_than(self, children):
+        return sympy.Lt
+
+    def greater_than(self, children):
+        return sympy.Gt
+
+    def less_than_or_equal(self, children):
+        return sympy.Le
+
+    def greater_than_or_equal(self, children):
+        return sympy.Ge
+
+    def not_equal(self, children):
+        return sympy.Ne
 
     def assignment(self, children):
         name, expr = children
@@ -55,9 +60,9 @@ class SympyTransformer(Transformer):
                 negate_child = True
             else:
                 if negate_child:
-                    child = sympy.Mul(-1, child)
+                    child = sympy.Mul(-1, child) # always evaluate
                 terms.append(child)
-        return sympy.Add(*terms)
+        return sympy.Add(*terms, evaluate=self.evaluate)
 
     def term(self, children):
         factors = []
@@ -69,9 +74,9 @@ class SympyTransformer(Transformer):
                 invert_child = True
             else:
                 if invert_child:
-                    child = sympy.Pow(child, -1)
+                    child = sympy.Pow(child, -1, evaluate=self.evaluate)
                 factors.append(child)
-        return sympy.Mul(*factors)
+        return sympy.Mul(*factors, evaluate=self.evaluate)
 
     def factor(self, children):
         op, expr = children
@@ -86,7 +91,7 @@ class SympyTransformer(Transformer):
 
     def exponential(self, children):
         lhs, op, rhs = children
-        return sympy.Pow(lhs, rhs)
+        return sympy.Pow(lhs, rhs, evaluate=self.evaluate)
 
     def factorial(self, children):
         expr, op = children
@@ -97,14 +102,31 @@ class SympyTransformer(Transformer):
         return expr
 
     def function(self, children):
-        name, *args = children
+        name, args = children
         if name in functions:
-            expr = functions[name](*args)
+            expr = functions[name](*args, evaluate=self.evaluate)
         elif name in postfix_operators:
-            expr = postfix_operators[name](*args)
+            expr = postfix_operators[name](*args, evaluate=self.evaluate)
         else:
             raise ValueError(f"Unrecognized function '{name}'")
         return expr
+
+    def postfix(self, children):
+        if len(children) > 1:
+            name, args = children
+        else:
+            name, = children
+            args = []
+        if name in postfix_operators:
+            function = postfix_operators[name]
+            def wrapper(expr):
+                return function(expr, *args, evaluate=self.evaluate)
+            return wrapper
+        else:
+            raise ValueError(f"Unrecognized postfix operator '{name}'")
+
+    def arglist(self, children):
+        return children
 
     def variable(self, children):
         name, = children

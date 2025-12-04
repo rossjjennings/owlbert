@@ -17,7 +17,16 @@ special_values = {
     'nan': sympy.nan,
 }
 
-def _integrate(expr, var=None, a=None, b=None):
+def _N(expr, evaluate=True):
+    return expr.evalf(n=mp.dps)
+
+def _evalf(expr, *args, evaluate=True):
+    return expr.evalf(*args)
+
+def _complexexpand(expr, evaluate=True):
+    return expr.expand(complex=True, evaluate=evaluate)
+
+def _integrate(expr, var=None, a=None, b=None, evaluate=True):
     if a is None and b is None:
         if var is None:
             return sympy.integrate(expr)
@@ -26,16 +35,24 @@ def _integrate(expr, var=None, a=None, b=None):
     else:
         return sympy.integrate(expr, (var, a, b))
 
-def _sum(expr, var, a, b):
-    return sympy.Sum(expr, (var, a, b)).doit()
+def _derivative(expr, *args, evaluate=True):
+    return sympy.Derivative(expr, *args, evaluate=evaluate)
 
-def _factor(expr, *args):
+
+
+def _sum(expr, var, a, b, evaluate=True):
+    result = sympy.Sum(expr, (var, a, b))
+    if evaluate:
+        result = result.doit()
+    return result
+
+def _factor(expr, *args, evaluate=True):
     if isinstance(expr, sympy.Integer):
         return _factorint(expr)
     else:
         return sympy.factor(expr, *args)
 
-def _factorint(expr):
+def _factorint(expr, evaluate=True):
     factors_dict = sympy.factorint(expr)
     ppow_factors = [
         sympy.Pow(key, val, evaluate=(val==1))
@@ -43,9 +60,15 @@ def _factorint(expr):
     ]
     return sympy.Mul(*ppow_factors, evaluate=False)
 
+def _subs(expr, *args, evaluate=True):
+    return expr.subs(*args, evaluate=evaluate)
+
+def _doit(expr, *args, evaluate=True):
+    return expr.doit(*args, evaluate=evaluate)
+
 postfix_operators = {
-    "N": lambda expr: expr.evalf(n=mp.dps),
-    "evalf": lambda expr, *args: expr.evalf(*args),
+    "N": _N,
+    "evalf": _evalf,
     "simplify": sympy.simplify,
     "expand": sympy.expand,
     "factor": _factor,
@@ -61,14 +84,14 @@ postfix_operators = {
     "logcombine": sympy.logcombine,
     "funcexpand": sympy.expand_func,
     "gammasimp": sympy.gammasimp,
-    "complexexpand": lambda expr: expr.expand(complex=True),
+    "complexexpand": _complexexpand,
     "limit": sympy.limit,
     "series": sympy.series,
     "integrate": _integrate,
-    "derivative": lambda *args: sympy.Derivative(*args, evaluate=True),
-    "subs": lambda expr, *args: expr.subs(*args),
+    "derivative": _derivative,
+    "subs": _subs,
     "sum": _sum,
-    "doit": lambda expr, *args: expr.doit(*args),
+    "doit": _doit,
     "factorint": _factorint,
 }
 
