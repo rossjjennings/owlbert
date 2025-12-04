@@ -6,7 +6,7 @@ from pathlib import Path
 import sympy
 from mpmath import mp
 
-from .compiler import compile_expression
+from .transforms import SympyTransformer
 from .completion import LatexCompleter
 from .printing import CustomPrinter
 
@@ -52,7 +52,7 @@ def run():
                 print(str(err))
                 continue
             try:
-                result = compile_expression(tree, local_vars)
+                result = SympyTransformer().transform(tree)
             except Exception as err:
                 print_formatted(HTML(f"<ansibrightred>{'-'*75}</ansibrightred>"))
                 msg = "<b>ERROR</b>: Could not evaluate expression"
