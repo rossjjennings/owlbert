@@ -24,7 +24,7 @@ add_op: "+" -> plus
 mul_op: "*" -> times
       | "/" -> divided_by
 exp_op: ("^"|"**") -> to_the
-fact_op: "!" -> factorial
+fact_op: "!" -> single_factorial
        | "!!" -> double_factorial
 name: NAME
 variable: NAME

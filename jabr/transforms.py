@@ -95,7 +95,7 @@ class SympyTransformer(Transformer):
 
     def factorial(self, children):
         expr, op = children
-        if op.data == 'factorial':
+        if op.data == 'single_factorial':
             expr = sympy.factorial(expr)
         elif op.data == 'double_factorial':
             expr = sympy.factorial2(expr)
